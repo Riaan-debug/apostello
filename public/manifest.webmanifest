@@ -1,0 +1,48 @@
+{
+  "name": "Apostellō Coffee Co.",
+  "short_name": "Apostellō",
+  "description": "Staff hub and loyalty kiosk for Apostellō Coffee Co.",
+  "start_url": "/hub",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#011b3d",
+  "theme_color": "#011b3d",
+  "lang": "en-ZA",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Loyalty kiosk",
+      "short_name": "Kiosk",
+      "url": "/kiosk"
+    },
+    {
+      "name": "Close of day",
+      "short_name": "Close day",
+      "url": "/hub/daily"
+    },
+    {
+      "name": "Stock take",
+      "short_name": "Stock",
+      "url": "/hub/stock"
+    }
+  ]
+}

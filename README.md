@@ -1,28 +1,21 @@
-# Apostellō Café hub (new)
+# Apostellō Coffee Co.
 
-Staff app + iPad loyalty kiosk. Old Luhandre files in `files/` are reference only. This app does **not** use his Netlify or Supabase keys.
+Public website, staff hub, and iPad loyalty kiosk — Next.js + Supabase.
 
-## Open it
+**Read [`CONTINUE.md`](CONTINUE.md) first.** That file is the handoff from 8 Sep 2026: what we built today, what is still left, and how to run this on another PC.
 
-From this folder (needs a local server if you want to test like a phone — double-clicking `index.html` usually works for PIN/localStorage mode):
+```
+git clone -b rebuild https://github.com/Riaan-debug/apostello.git
+cd apostello
+npm install
+```
 
-- Staff: `hub/index.html`
-- iPad kiosk: `hub/kiosk.html` (or `index.html?kiosk=1`) — Add to Home Screen, then Guided Access
+Copy `.env.example` to `.env.local` and fill the three keys from the **apostello** Supabase project. Never commit `.env.local`.
 
-First staff visit: create a 4–8 digit PIN. Same PIN unlocks stamps on the kiosk.
+```
+npm run dev
+```
 
-Starter menu and stock come from the old hub. Loyalty starts empty unless you import a JSON backup.
+Opens at http://localhost:6589
 
-## When you are ready for the cloud (iPad + phone sharing)
-
-1. Create a **new** Supabase project (your account or Bjorn’s).
-2. Run `sql/schema.sql` in the SQL editor.
-3. Authentication → add a staff user (email + password).
-4. Put the project URL and anon key in `js/supabase-client.js`.
-5. Host the `hub/` folder on HTTPS (domains.co.za, Netlify, Cloudflare Pages — any static host).
-
-Until those keys are filled, data stays in this browser only.
-
-## Backup
-
-Settings → Download backup. Import accepts the old hub’s JSON export if someone still has one (`customers`, `menuItems`, `stock`, `dailyLog`, `settings`).
+The old static HTML hub is still on GitHub `main`. This Next.js rebuild lives on the **`rebuild`** branch.
