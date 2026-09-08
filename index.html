@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Apostellō">
+  <title>Apostellō Café</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta property="og:title" content="Apostellō Café">
+  <meta property="og:description" content="not just served, Sent.">
+  <meta property="og:image" content="assets/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="gate"></div>
+  <div id="app" class="app" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img src="assets/logo.svg" alt="Apostellō" class="sidebar-logo">
+        <div class="brand-slogan">not just served, Sent.</div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-foot" id="sidebarFoot"></div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" id="hamburger" type="button" aria-label="Menu">☰</button>
+        <div class="topbar-brand">
+          <span class="tb-name">Apostellō Café</span>
+          <span class="tb-sep">·</span>
+          <h1 class="page-title" id="pageTitle">Hub</h1>
+        </div>
+        <span class="topbar-date" id="topbarDate"></span>
+      </header>
+      <div class="content" id="content"></div>
+    </div>
+  </div>
+
+  <div id="kiosk" class="kiosk-overlay" hidden>
+    <div class="kiosk-inner">
+      <img src="assets/logo.svg" alt="Apostellō" class="kiosk-logo">
+      <div class="kiosk-tagline">not just served, Sent.</div>
+      <div id="kioskBody"></div>
+    </div>
+    <button class="kiosk-staff-btn" type="button" id="kioskStaffBtn">Staff</button>
+  </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal-box" id="modalBox">
+      <button class="modal-close" type="button" id="modalClose">✕</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/defaults.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/kiosk.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
