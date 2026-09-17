@@ -85,6 +85,11 @@
     scroll-behavior: smooth;
   }
 
+  #coffee,
+  #food {
+    scroll-margin-top: 6rem;
+  }
+
   body {
     background: var(--color-cream);
     color: var(--color-ink);

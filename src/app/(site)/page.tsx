@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Coffee, MapPin, Sparkles } from 'lucide-react';
 import { getSiteData, imageUrl, openStatus, sortedHours } from '@/lib/content';
+import { HomeBands } from '@/components/site/HomeBands';
 import { Hours } from '@/components/site/Hours';
 import { MenuGroups } from '@/components/site/MenuGroups';
 import { StructuredData } from '@/components/site/StructuredData';
@@ -19,6 +20,13 @@ export default async function HomePage() {
   const videos = (Array.isArray(content?.videos) ? content.videos : [])
     .map((clip) => ({ ...clip, src: imageUrl(clip.path) }))
     .filter((clip): clip is typeof clip & { src: string } => Boolean(clip.src));
+  const foodPhotos = (Array.isArray(content?.food_photos) ? content.food_photos : [])
+    .map((photo) => ({ src: imageUrl(photo.path), alt: photo.alt || '' }))
+    .filter((photo): photo is { src: string; alt: string } => Boolean(photo.src));
+  const coffeePhotos = (Array.isArray(content?.coffee_photos) ? content.coffee_photos : [])
+    .map((photo) => ({ src: imageUrl(photo.path), alt: photo.alt || '' }))
+    .filter((photo): photo is { src: string; alt: string } => Boolean(photo.src));
+  const hasFoodOnMenu = menu.some((group) => group.category.toLowerCase() === 'food');
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://apostellocoffee.co.za';
 
   // Two categories is enough of a taste on the home page; the rest is /menu.
@@ -166,6 +174,31 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <HomeBands
+        food={
+          foodPhotos.length > 0
+            ? {
+                heading: content?.food_heading || "What's cooking",
+                body: content?.food_body || '',
+                photos: foodPhotos,
+                href: hasFoodOnMenu ? '/menu#food' : '/menu',
+                cta: hasFoodOnMenu ? 'See the food' : 'See the menu',
+              }
+            : null
+        }
+        coffee={
+          coffeePhotos.length > 0
+            ? {
+                heading: content?.coffee_heading || 'Home Blend',
+                body: content?.coffee_body || '',
+                photos: coffeePhotos,
+                href: '/menu#coffee',
+                cta: 'See the drinks',
+              }
+            : null
+        }
+      />
 
       {/* ── Menu taster ──────────────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-20">

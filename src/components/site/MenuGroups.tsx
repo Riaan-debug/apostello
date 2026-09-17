@@ -1,7 +1,13 @@
 import { moneyBare } from '@/lib/domain/format';
 import type { PublicMenuGroup } from '@/lib/content';
 
-export function MenuGroups({ groups }: { groups: PublicMenuGroup[] }) {
+export function MenuGroups({
+  groups,
+  withAnchors = false,
+}: {
+  groups: PublicMenuGroup[];
+  withAnchors?: boolean;
+}) {
   if (groups.length === 0) {
     return (
       <p className="text-sm text-steel">
@@ -12,8 +18,19 @@ export function MenuGroups({ groups }: { groups: PublicMenuGroup[] }) {
 
   return (
     <div className="space-y-12">
-      {groups.map((group) => (
-        <section key={group.category}>
+      {groups.map((group, index) => {
+        const isFood = group.category.toLowerCase() === 'food';
+        const firstDrinkIndex = groups.findIndex((row) => row.category.toLowerCase() !== 'food');
+        const sectionId = withAnchors
+          ? isFood
+            ? 'food'
+            : index === firstDrinkIndex
+              ? 'coffee'
+              : undefined
+          : undefined;
+
+        return (
+          <section key={group.category} id={sectionId} className="scroll-mt-24">
           <h2 className="mb-5 flex items-center gap-3 text-[11px] font-semibold tracking-[0.16em] text-steel uppercase">
             {group.category}
             <span className="h-px flex-1 bg-line" />
@@ -44,8 +61,9 @@ export function MenuGroups({ groups }: { groups: PublicMenuGroup[] }) {
               </li>
             ))}
           </ul>
-        </section>
-      ))}
+          </section>
+        );
+      })}
     </div>
   );
 }

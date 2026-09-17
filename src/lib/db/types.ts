@@ -266,6 +266,12 @@ export type SiteContent = {
   hours_note: string;
   gallery: GalleryImage[];
   videos: SiteVideo[];
+  food_heading: string;
+  food_body: string;
+  food_photos: GalleryImage[];
+  coffee_heading: string;
+  coffee_body: string;
+  coffee_photos: GalleryImage[];
   updated_at: string;
 }
 

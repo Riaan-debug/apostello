@@ -30,7 +30,7 @@ export default async function MenuPage() {
         </p>
       </header>
 
-      <MenuGroups groups={menu} />
+      <MenuGroups groups={menu} withAnchors />
 
       <div className="mt-16 rounded-[14px] border border-line bg-white p-7">
         <h2 className="text-lg font-semibold text-ink">Every tenth cup is on us</h2>

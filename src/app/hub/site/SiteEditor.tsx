@@ -1,13 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useRef, useState, useTransition } from 'react';
 import Link from 'next/link';
 import {
-  ChevronDown,
-  ChevronUp,
   ExternalLink,
   Film,
-  ImagePlus,
   Loader2,
   Sparkles,
   Trash2,
@@ -19,10 +16,12 @@ import { Card, CardBody, CardHeader, SectionHeading } from '@/components/ui/Card
 import { Checkbox, Field, FormGrid, Input, Textarea } from '@/components/ui/form';
 import { useToast } from '@/components/ui/Toast';
 import { imageUrl } from '@/lib/images';
+import { FALLBACK_INSTAGRAM_URL } from '@/lib/fallback-site';
 import { ImagePicker } from './ImagePicker';
+import { PhotoListEditor } from './PhotoListEditor';
 import { VideoPicker } from './VideoPicker';
 import { saveSiteContent, type SiteContentInput } from './actions';
-import { uploadSiteImage, uploadSiteVideo } from './upload';
+import { uploadSiteVideo } from './upload';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -48,7 +47,7 @@ function initialForm(content: SiteContent | null, business: Business): SiteConte
     phone: content?.phone ?? '',
     email: content?.email ?? '',
     whatsapp_url: content?.whatsapp_url ?? '',
-    instagram_url: content?.instagram_url ?? '',
+    instagram_url: content?.instagram_url || FALLBACK_INSTAGRAM_URL,
     facebook_url: content?.facebook_url ?? '',
     hours: DAYS.map((day) => {
       const row = existing.get(day);
@@ -68,6 +67,20 @@ function initialForm(content: SiteContent | null, business: Business): SiteConte
       path: video.path,
       title: video.title ?? '',
     })),
+    food_heading: content?.food_heading ?? '',
+    food_body: content?.food_body ?? '',
+    food_photos: (Array.isArray(content?.food_photos) ? content.food_photos : []).map((image) => ({
+      path: image.path,
+      alt: image.alt ?? '',
+    })),
+    coffee_heading: content?.coffee_heading ?? '',
+    coffee_body: content?.coffee_body ?? '',
+    coffee_photos: (Array.isArray(content?.coffee_photos) ? content.coffee_photos : []).map(
+      (image) => ({
+        path: image.path,
+        alt: image.alt ?? '',
+      }),
+    ),
   };
 }
 
@@ -232,6 +245,76 @@ export function SiteEditor({
         />
 
         <Card>
+          <CardHeader
+            title="Food on the home page"
+            subtitle="A photo band, not a second menu. Links through to the food items on Menu."
+          />
+          <CardBody className="space-y-4">
+            <Field label="Heading">
+              <Input
+                value={form.food_heading}
+                onChange={(event) => update('food_heading', event.target.value)}
+                placeholder="What's cooking"
+              />
+            </Field>
+            <Field label="A line under it" hint="Optional. Keep it short.">
+              <Textarea
+                value={form.food_body}
+                onChange={(event) => update('food_body', event.target.value)}
+                rows={2}
+              />
+            </Field>
+          </CardBody>
+        </Card>
+
+        <PhotoListEditor
+          title="Food photos"
+          subtitle="These sit in the food band. The band stays hidden until you add one and save."
+          folder="food"
+          photos={form.food_photos}
+          onChange={(photos) => update('food_photos', photos)}
+          onError={toast.error}
+          emptyTitle="No food photos yet"
+          emptyHint="A plate from the trailer works better than a stock shot."
+          altPlaceholder="JalapeÃ±o hot dog on the trailer counter"
+        />
+
+        <Card>
+          <CardHeader
+            title="Coffee on the home page"
+            subtitle="Bags, cups, the roast. Links through to the drinks on Menu."
+          />
+          <CardBody className="space-y-4">
+            <Field label="Heading">
+              <Input
+                value={form.coffee_heading}
+                onChange={(event) => update('coffee_heading', event.target.value)}
+                placeholder="Home Blend"
+              />
+            </Field>
+            <Field label="A line under it" hint="Optional. Keep it short.">
+              <Textarea
+                value={form.coffee_body}
+                onChange={(event) => update('coffee_body', event.target.value)}
+                rows={2}
+              />
+            </Field>
+          </CardBody>
+        </Card>
+
+        <PhotoListEditor
+          title="Coffee photos"
+          subtitle="These sit in the coffee band. The band stays hidden until you add one and save."
+          folder="coffee"
+          photos={form.coffee_photos}
+          onChange={(photos) => update('coffee_photos', photos)}
+          onError={toast.error}
+          emptyTitle="No coffee photos yet"
+          emptyHint="The Home Blend bag, a cup, or the roast."
+          altPlaceholder="ApostellÅ Home Blend bag"
+        />
+
+        <Card>
           <CardHeader title="About" subtitle="The short paragraph halfway down the home page." />
           <CardBody className="space-y-4">
             <Field label="Small heading" hint="A short label above the paragraph.">
@@ -325,7 +408,7 @@ export function SiteEditor({
               <Input
                 value={form.hours_note}
                 onChange={(event) => update('hours_note', event.target.value)}
-                placeholder="Public holidays vary — check Instagram."
+                placeholder="Public holidays vary â€” check Instagram."
               />
             </Field>
           </CardBody>
@@ -378,7 +461,7 @@ export function SiteEditor({
 
             <Field
               label="Google Maps embed link"
-              hint="From Maps: Share → Embed a map → copy only the src=&quot;...&quot; address. This one draws the map on the page."
+              hint="From Maps: Share â†’ Embed a map â†’ copy only the src=&quot;...&quot; address. This one draws the map on the page."
             >
               <Input
                 value={form.maps_embed_url}
@@ -415,10 +498,17 @@ export function SiteEditor({
           </CardBody>
         </Card>
 
-        <GalleryEditor
-          gallery={form.gallery}
-          onChange={(gallery) => update('gallery', gallery)}
+        <PhotoListEditor
+          title="Photo gallery"
+          subtitle="The first six appear lower on the home page, in this order."
+          folder="gallery"
+          photos={form.gallery}
+          onChange={(photos) => update('gallery', photos)}
           onError={toast.error}
+          max={24}
+          emptyTitle="No photos yet"
+          emptyHint="Six good photos beat twenty average ones. The section is hidden while this is empty."
+          altPlaceholder="Flat white on the trailer counter"
         />
       </div>
 
@@ -564,163 +654,6 @@ function VideosEditor({
           }}
         />
       </CardBody>
-    </Card>
-  );
-}
-
-function GalleryEditor({
-  gallery,
-  onChange,
-  onError,
-}: {
-  gallery: SiteContentInput['gallery'];
-  onChange: (gallery: SiteContentInput['gallery']) => void;
-  onError: (message: string) => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
-
-  async function addFiles(files: FileList | null) {
-    if (!files || files.length === 0) return;
-    setBusy(true);
-
-    const added: SiteContentInput['gallery'] = [];
-    for (const file of Array.from(files)) {
-      const result = await uploadSiteImage('gallery', file);
-      if ('error' in result) {
-        onError(result.error);
-        continue;
-      }
-      added.push({ path: result.path, alt: '' });
-    }
-
-    setBusy(false);
-    if (added.length > 0) onChange([...gallery, ...added].slice(0, 24));
-  }
-
-  function move(index: number, direction: -1 | 1) {
-    const target = index + direction;
-    if (target < 0 || target >= gallery.length) return;
-    const next = [...gallery];
-    [next[index], next[target]] = [next[target], next[index]];
-    onChange(next);
-  }
-
-  return (
-    <Card>
-      <CardHeader
-        title="Photo gallery"
-        subtitle="The first six appear on the home page, in this order."
-        action={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            loading={busy}
-            onClick={() => inputRef.current?.click()}
-          >
-            <ImagePlus className="size-3.5" />
-            Add photos
-          </Button>
-        }
-      />
-      <CardBody>
-        {gallery.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-[10px] border border-dashed border-line py-10 text-center">
-            {busy ? (
-              <Loader2 className="size-5 animate-spin text-steel-light" />
-            ) : (
-              <ImagePlus className="size-5 text-steel-light" />
-            )}
-            <p className="text-sm font-semibold text-ink">No photos yet</p>
-            <p className="max-w-xs text-xs text-steel">
-              Six good photos beat twenty average ones. The section is hidden while this is empty.
-            </p>
-          </div>
-        ) : (
-          <ul className="space-y-3">
-            {gallery.map((image, index) => {
-              const preview = imageUrl(image.path);
-              return (
-                <li
-                  key={image.path}
-                  className="flex flex-wrap items-start gap-3 border-b border-line-soft pb-3 last:border-0 last:pb-0"
-                >
-                  <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-[8px] border border-line bg-cream">
-                    {preview && (
-                      // eslint-disable-next-line @next/next/no-img-element -- storage host is not in next.config yet
-                      <img src={preview} alt={image.alt} className="size-full object-cover" />
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <Field
-                      label={index < 6 ? `Photo ${index + 1} · on the home page` : `Photo ${index + 1}`}
-                      hint="Describe the photo in a few words, for screen readers and Google."
-                    >
-                      <Input
-                        value={image.alt}
-                        onChange={(event) =>
-                          onChange(
-                            gallery.map((row, i) =>
-                              i === index ? { ...row, alt: event.target.value } : row,
-                            ),
-                          )
-                        }
-                        placeholder="Flat white on the trailer counter"
-                      />
-                    </Field>
-                  </div>
-
-                  <div className="flex shrink-0 gap-1 pt-6">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      aria-label="Move up"
-                      disabled={index === 0}
-                      onClick={() => move(index, -1)}
-                    >
-                      <ChevronUp className="size-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      aria-label="Move down"
-                      disabled={index === gallery.length - 1}
-                      onClick={() => move(index, 1)}
-                    >
-                      <ChevronDown className="size-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      aria-label="Remove photo"
-                      onClick={() => onChange(gallery.filter((_, i) => i !== index))}
-                    >
-                      <Trash2 className="size-4 text-bad" />
-                    </Button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </CardBody>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        className="hidden"
-        onChange={(event) => {
-          void addFiles(event.target.files);
-          event.target.value = '';
-        }}
-      />
     </Card>
   );
 }

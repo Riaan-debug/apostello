@@ -21,6 +21,9 @@ export const FALLBACK_HOURS: OpeningHour[] = [
 export const FALLBACK_MAPS_URL =
   'https://www.google.com/maps/search/?api=1&query=CMV+Business+Park';
 
+/** Public profile. No share-token on the end. */
+export const FALLBACK_INSTAGRAM_URL = 'https://www.instagram.com/apostellocafe/';
+
 const FALLBACK_BUSINESS: Business = {
   id: BUSINESS_ID,
   name: 'Apostellō Coffee Co.',
@@ -37,6 +40,20 @@ const FALLBACK_BUSINESS: Business = {
   created_at: STAMP,
   updated_at: STAMP,
 };
+
+export const FALLBACK_FOOD_HEADING = "What's cooking";
+export const FALLBACK_FOOD_BODY = 'Bites from the trailer — ask what is on today.';
+export const FALLBACK_COFFEE_HEADING = 'Home Blend';
+export const FALLBACK_COFFEE_BODY =
+  'Roasted for the park. Cups at the trailer, bags to take home.';
+export const FALLBACK_FOOD_PHOTOS = [
+  { path: '/site/food-hot-dog.jpg', alt: 'Loaded hot dog from the Apostellō trailer' },
+  { path: '/site/food-banana-bread.png', alt: "J's banana bread, always available at the trailer" },
+];
+export const FALLBACK_COFFEE_PHOTOS = [
+  { path: '/site/coffee-home-blend.jpg', alt: 'Apostellō Home Blend bag on roasted beans' },
+  { path: '/site/coffee-roast.jpg', alt: 'Roasting Home Blend at the machine' },
+];
 
 const FALLBACK_CONTENT: SiteContent = {
   business_id: BUSINESS_ID,
@@ -57,12 +74,18 @@ const FALLBACK_CONTENT: SiteContent = {
   phone: '',
   email: '',
   whatsapp_url: '',
-  instagram_url: '',
+  instagram_url: FALLBACK_INSTAGRAM_URL,
   facebook_url: '',
   hours: FALLBACK_HOURS,
   hours_note: 'Public holidays vary — check Instagram.',
   gallery: [],
   videos: [],
+  food_heading: FALLBACK_FOOD_HEADING,
+  food_body: FALLBACK_FOOD_BODY,
+  food_photos: FALLBACK_FOOD_PHOTOS,
+  coffee_heading: FALLBACK_COFFEE_HEADING,
+  coffee_body: FALLBACK_COFFEE_BODY,
+  coffee_photos: FALLBACK_COFFEE_PHOTOS,
   updated_at: STAMP,
 };
 

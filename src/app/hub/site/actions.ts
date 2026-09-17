@@ -64,6 +64,12 @@ const siteContentSchema = z.object({
   hours_note: z.string().trim().max(300),
   gallery: z.array(galleryImageSchema).max(24),
   videos: z.array(siteVideoSchema).max(4),
+  food_heading: z.string().trim().max(80),
+  food_body: z.string().trim().max(400),
+  food_photos: z.array(galleryImageSchema).max(8),
+  coffee_heading: z.string().trim().max(80),
+  coffee_body: z.string().trim().max(400),
+  coffee_photos: z.array(galleryImageSchema).max(8),
 });
 
 export type SiteContentInput = z.infer<typeof siteContentSchema>;
@@ -108,17 +114,34 @@ export async function saveSiteContent(input: SiteContentInput): Promise<ActionRe
 
   try {
     const supabase = await supabaseServer();
-    const { error } = await supabase.from('site_content').upsert(
-      {
-        ...content,
-        hours,
-        business_id: session.business.id,
-        hero_image_path: content.hero_image_path || null,
-        hero_video_path: content.hero_video_path || null,
-        special_image_path: content.special_image_path || null,
-      },
-      { onConflict: 'business_id' },
-    );
+    const row = {
+      ...content,
+      hours,
+      business_id: session.business.id,
+      hero_image_path: content.hero_image_path || null,
+      hero_video_path: content.hero_video_path || null,
+      special_image_path: content.special_image_path || null,
+    };
+
+    let { error } = await supabase.from('site_content').upsert(row, { onConflict: 'business_id' });
+
+    // Migration 0007 adds the food/coffee columns. If it is not on this
+    // database yet, still save everything else so the rest of the site editor
+    // keeps working.
+    if (error && /food_|coffee_/.test(error.message)) {
+      const {
+        food_heading: _fh,
+        food_body: _fb,
+        food_photos: _fp,
+        coffee_heading: _ch,
+        coffee_body: _cb,
+        coffee_photos: _cp,
+        ...withoutOfferings
+      } = row;
+      ({ error } = await supabase
+        .from('site_content')
+        .upsert(withoutOfferings, { onConflict: 'business_id' }));
+    }
 
     if (error) {
       return { ok: false, error: 'The website did not save. Please try again in a moment.' };

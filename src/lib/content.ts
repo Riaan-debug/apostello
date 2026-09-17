@@ -1,8 +1,19 @@
 import { unstable_cache } from 'next/cache';
 import { supabaseAnonymous } from '@/lib/supabase/server';
-import type { Business, MenuItem, MenuItemSize, SiteContent } from '@/lib/db/types';
+import type { Business, GalleryImage, MenuItem, MenuItemSize, SiteContent } from '@/lib/db/types';
 import { hasSupabaseEnv } from '@/lib/env';
-import { FALLBACK_HOURS, FALLBACK_MAPS_URL, fallbackSiteData } from '@/lib/fallback-site';
+import {
+  FALLBACK_COFFEE_BODY,
+  FALLBACK_COFFEE_HEADING,
+  FALLBACK_COFFEE_PHOTOS,
+  FALLBACK_FOOD_BODY,
+  FALLBACK_FOOD_HEADING,
+  FALLBACK_FOOD_PHOTOS,
+  FALLBACK_HOURS,
+  FALLBACK_INSTAGRAM_URL,
+  FALLBACK_MAPS_URL,
+  fallbackSiteData,
+} from '@/lib/fallback-site';
 
 export const SITE_TAG = 'site-content';
 export const MENU_TAG = 'public-menu';
@@ -21,6 +32,15 @@ export interface SiteData {
 }
 
 const CATEGORY_ORDER = ['Espresso', 'Milk-based', 'Speciality', 'Cold', 'Food', 'Other'];
+
+/** Keep the starter food shots until Hub has its own list (more than the original hot dog). */
+function starterFoodPhotos(stored: GalleryImage[] | null | undefined): GalleryImage[] {
+  const db = Array.isArray(stored) ? stored : [];
+  const onlyOriginalHotDog =
+    db.length === 1 && db[0]?.path === '/site/food-hot-dog.jpg';
+  if (db.length === 0 || onlyOriginalHotDog) return FALLBACK_FOOD_PHOTOS;
+  return db;
+}
 
 /**
  * Everything the public website needs, in one cached read. Tagged so the hub
@@ -86,8 +106,17 @@ export const getSiteData = unstable_cache(
             ...raw,
             hours: Array.isArray(raw.hours) && raw.hours.length > 0 ? raw.hours : FALLBACK_HOURS,
             maps_url: raw.maps_url || FALLBACK_MAPS_URL,
+            instagram_url: raw.instagram_url || FALLBACK_INSTAGRAM_URL,
             videos: Array.isArray(raw.videos) ? raw.videos : [],
             hero_video_path: raw.hero_video_path ?? null,
+            food_heading: raw.food_heading || FALLBACK_FOOD_HEADING,
+            food_body: raw.food_body || FALLBACK_FOOD_BODY,
+            food_photos: starterFoodPhotos(raw.food_photos),
+            coffee_heading: raw.coffee_heading || FALLBACK_COFFEE_HEADING,
+            coffee_body: raw.coffee_body || FALLBACK_COFFEE_BODY,
+            coffee_photos: Array.isArray(raw.coffee_photos)
+              ? raw.coffee_photos
+              : FALLBACK_COFFEE_PHOTOS,
           }
         : null;
 

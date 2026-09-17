@@ -1,5 +1,5 @@
 import { addDays, eachDay, today, weekRange } from '@/lib/domain/dates';
-import { FALLBACK_HOURS, FALLBACK_MAPS_URL } from '@/lib/fallback-site';
+import { FALLBACK_HOURS, FALLBACK_INSTAGRAM_URL, FALLBACK_MAPS_URL } from '@/lib/fallback-site';
 import {
   PREVIEW_BUSINESS,
   PREVIEW_BUSINESS_ID as BID,
@@ -382,12 +382,18 @@ export function createPreviewTables(): Record<string, Record<string, unknown>[]>
         phone: '',
         email: '',
         whatsapp_url: '',
-        instagram_url: '',
+        instagram_url: FALLBACK_INSTAGRAM_URL,
         facebook_url: '',
         hours: FALLBACK_HOURS,
         hours_note: 'Public holidays vary — check Instagram.',
         gallery: [],
         videos: [],
+        food_heading: "What's cooking",
+        food_body: 'Bites from the trailer — ask what is on today.',
+        food_photos: [],
+        coffee_heading: 'Home Blend',
+        coffee_body: 'Roasted for the park. Cups at the trailer, bags to take home.',
+        coffee_photos: [],
         updated_at: T,
       },
     ],
